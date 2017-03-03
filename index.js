@@ -20,15 +20,23 @@ const mimeTypes = {
 class Daphne {
     constructor() {
         const http = require('http')
+        
         const appPath = process.argv[1]
         const parsedPath = path.parse(appPath)
         this.baseDirectory = parsedPath.ext !== '' ? parsedPath.dir : appPath
-        console.log('base', this.baseDirectory)
 
-        const server = http.createServer((req, res) => {
+        const server = http.createServer((req, res) => {})
+
+        server.on('request', (req, res) => {
+            if(this.routes.indexOf(req.url) === -1) {
+                res.statusCode = 404
+                res.end()
+            }
         })
 
         this.server = server
+        
+        this.routes = []
     }
 
     listen(port = 3000, callback = () => {}) {
@@ -38,6 +46,7 @@ class Daphne {
     }
 
     get(route, func) {
+        this.routes.push(route)
         this.server.on('request', (request, response) => {
             if(request.url === route) {
                 func(request, Object.assign({}, response, { 
@@ -64,6 +73,7 @@ class Daphne {
             if(err) {
                 if(err.code === 'ENOENT') {
                     console.log(`Template not found: ${err.path}`)
+                    response.statusCode = 404
                     response.end('File not found.')
                 } else {
                     console.log(err);
