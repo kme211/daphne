@@ -11,7 +11,9 @@ const logger = (req, res) => {
 }
 
 const handleNotFound = (req, res) => {
-    res.end('Oops, that file cannot be found')
+    if(res.statusCode === 404) {
+        res.end('Oops, that file cannot be found')
+    }   
 }
 
 app.use(logger)

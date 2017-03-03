@@ -65,23 +65,15 @@ class Daphne {
         response.end(data)
     }
 
-    render(response, template) {
+    render(response, template, locals) {
         response.writeHead(200, { 'Content-Type': mimeTypes.html })
         const templatePath = this.getPath(`views/${template}`)
-        fs.readFile(templatePath, (err, data) => {
-            if(err) {
-                if(err.code === 'ENOENT') {
-                    console.log(`Template not found: ${err.path}`)
-                    response.statusCode = 404
-                    response.end('File not found.')
-                } else {
-                    console.log(err);
-                    response.end('An error occurred.')
-                }
-            } else {
-                response.end(data)
-            }
-        })
+        
+        if(!fs.existsSync(templatePath)) {
+            response.statusCode = 404
+        } else {
+            fs.createReadStream(templatePath, 'utf-8').pipe(response)
+        }
     }
 
     use(fn) {
