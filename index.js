@@ -20,7 +20,10 @@ const mimeTypes = {
 class Daphne {
     constructor() {
         const http = require('http')
-        this.baseDirectory = process.argv[1]
+        const appPath = process.argv[1]
+        const parsedPath = path.parse(appPath)
+        this.baseDirectory = parsedPath.ext !== '' ? parsedPath.dir : appPath
+        console.log('base', this.baseDirectory)
 
         const server = http.createServer((req, res) => {
         })
@@ -74,7 +77,7 @@ class Daphne {
 
     use(fn) {
         if(typeof fn === 'function') {
-
+            this.server.on('request', fn)
         } else if(Array.isArray(fn)) {
             fn.forEach(({ route, fn }) => {
                 this.get(route, fn)
