@@ -1,8 +1,9 @@
-const Daphne = require('./daphne')
+const Daphne = require('..')
+const path = require('path')
 
 const app = new Daphne()
 
-app.use(app.static('public'))
+app.use(app.static(path.join(__dirname, 'public')))
 
 app.get('/hello', (req, res) => {
     res.send('text', 'hola!')

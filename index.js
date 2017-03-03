@@ -1,4 +1,5 @@
 const fs = require('fs')
+const path = require('path')
 
 const mimeTypes = {
     text: 'text/plain',
@@ -19,6 +20,7 @@ const mimeTypes = {
 class Daphne {
     constructor() {
         const http = require('http')
+        this.baseDirectory = process.argv[1]
 
         const server = http.createServer((req, res) => {
         })
@@ -40,22 +42,26 @@ class Daphne {
         this.server.on('request', (request, response) => {
             if(request.url === route) {
                 func(request, Object.assign({}, response, { 
-                    send: this.send.bind(response),
-                    render: this.render.bind(response)
+                    send: this.send.bind(this, response),
+                    render: this.render.bind(this, response)
                 }))
             }
         })
     }
 
-    send(type, data) {
-        this.writeHead(200, { 'Content-Type': mimeTypes[type] })
-        this.end(data)
+    getPath(directory) {
+        return path.join(this.baseDirectory, directory)
     }
 
-    render(template) {
-        const response = this;
+    send(response, type, data) {
+        response.writeHead(200, { 'Content-Type': mimeTypes[type] })
+        response.end(data)
+    }
+
+    render(response, template) {
         response.writeHead(200, { 'Content-Type': mimeTypes.html })
-        fs.readFile(`views/${template}`, (err, data) => {
+        const templatePath = this.getPath(`views/${template}`)
+        fs.readFile(templatePath, (err, data) => {
             if(err) {
                 if(err.code === 'ENOENT') {
                     console.log(`Template not found: ${err.path}`)
@@ -74,8 +80,8 @@ class Daphne {
         if(typeof fn === 'function') {
 
         } else if(Array.isArray(fn)) {
-            fn.forEach(({ path, fn }) => {
-                this.get('/' + path, fn)
+            fn.forEach(({ route, fn }) => {
+                this.get(route, fn)
             })
         }
     }
@@ -83,14 +89,19 @@ class Daphne {
     static(dir) {
         const files = fs.readdirSync(dir)
         return files.map(file => {
-            const extension = file.split('.').pop()
-            const path = `${dir}/${file}`
+            const parsed = path.parse(`${dir}/${file}`)
+            const filePath = path.format({
+                root: this.baseDirectory,
+                dir: parsed.dir,
+                base: parsed.base
+            })
+            const extension = parsed.ext.slice(1)
+            const route = filePath.replace(this.baseDirectory, '').split(path.sep).join('/')
             
             return {
-                path,
+                route,
                 fn: (req, res) => {
-                    console.log(`Request for static file: ${path}`)
-                    fs.readFile(path, (err, data) => {
+                    fs.readFile(filePath, (err, data) => {
                         if(err) {
                             console.log(err)
                         } else {
