@@ -6,6 +6,12 @@ const port = 3000
 
 app.use(app.static(path.join(__dirname, 'public')))
 
+const logger = (req, res) => {
+    console.log(`${res.statusCode} ${req.method} request for ${req.url}`)
+}
+
+app.use(logger)
+
 app.get('/hello', (req, res) => {
     res.send('text', 'hola!')
 })
