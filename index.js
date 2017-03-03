@@ -30,7 +30,6 @@ class Daphne {
         server.on('request', (req, res) => {
             if(this.routes.indexOf(req.url) === -1) {
                 res.statusCode = 404
-                res.end()
             }
         })
 
@@ -49,7 +48,7 @@ class Daphne {
         this.routes.push(route)
         this.server.on('request', (request, response) => {
             if(request.url === route) {
-                func(request, Object.assign({}, response, { 
+                func(request, Object.assign(response, { 
                     send: this.send.bind(this, response),
                     render: this.render.bind(this, response)
                 }))
@@ -110,13 +109,11 @@ class Daphne {
             return {
                 route,
                 fn: (req, res) => {
-                    fs.readFile(filePath, (err, data) => {
-                        if(err) {
-                            console.log(err)
-                        } else {
-                            res.send(extension, data)
-                        }
-                    })
+                    if(!fs.existsSync(filePath)) {
+                        res.statusCode = 404
+                    } else {
+                        fs.createReadStream(filePath).pipe(res)
+                    }
                 }
             }
         })

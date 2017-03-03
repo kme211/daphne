@@ -10,7 +10,12 @@ const logger = (req, res) => {
     console.log(`${res.statusCode} ${req.method} request for ${req.url}`)
 }
 
+const handleNotFound = (req, res) => {
+    res.end('Oops, that file cannot be found')
+}
+
 app.use(logger)
+app.use(handleNotFound)
 
 app.get('/hello', (req, res) => {
     res.send('text', 'hola!')
