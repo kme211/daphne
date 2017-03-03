@@ -25,16 +25,12 @@ class Daphne {
         const server = http.createServer((req, res) => {
         })
 
-        server.on('request', (message) => {
-            console.log(`Request for resource: ${message.url}`)
-        })
-
         this.server = server
     }
 
     listen(port = 3000, callback = () => {}) {
         this.server.listen(port, () => {
-            console.log(`server listening on port ${port}`)
+            callback()
         })
     }
 
