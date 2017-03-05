@@ -5,10 +5,12 @@ const path = require('path')
 const app = new Daphne()
 const port = 3000
 
-app.use(app.static(path.join(__dirname, 'public'))) // grabs everything from public folder and creates routes for all of them
+// define static assets
+app.use(app.static(path.join(__dirname, 'public')))
 
-const logger = (req, res) => {
-  console.log(`${res.statusCode} ${req.method} request for ${req.url}`)
+// define middleware
+const logger = ({ method, url }, { statusCode }) => {
+  console.log(`${statusCode} ${method} request for ${url}`)
 }
 
 const handleNotFound = (req, res) => {

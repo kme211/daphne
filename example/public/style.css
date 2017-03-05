@@ -18,6 +18,10 @@ a {
     font-size: 1.25em;
 }
 
+pre {
+    padding: 0 1rem;
+}
+
 body {
     margin: 0 auto;
     max-width: 700px;

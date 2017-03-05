@@ -32,21 +32,46 @@ I named this project "Daphne" after my <a href="http://res.cloudinary.com/ddy54k
     <h2>Usage</h2>
     <pre class="prettyprint">
 <code class="lang-js">
-    const Daphne = require('./daphne')
+// instantiation
+const app = new Daphne()
+const port = 3000
 
-    const app = new Daphne()
+// define static assets
+app.use(app.static(path.join(__dirname, 'public')))
 
-    app.use(app.static('public'))
+// define middleware
+const logger = ({ method, url }, { statusCode }) => {
+  console.log(`${statusCode} ${method} request for ${url}`)
+}
 
-    app.get('/hello', (req, res) => {
-        res.send('hola!')
-    })
+const handleNotFound = (req, res) => {
+  if (res.statusCode === 404) {
+    res.render('not-found.html') // route 404s to specific page
+  }
+}
 
-    app.get('/', (req, res) => {
-        res.render('index.html')
-    })
+// use middleware
+app.use(logger)
+app.use(handleNotFound)
 
-    app.listen()
+// routes
+app.get('/', (req, res) => {
+  res.render('index.html')
+})
+
+app.get('/hello', (req, res) => {
+  res.send('hola!') // sends plain text
+})
+
+app.get('/dog', (req, res) => {
+  res.send('public/daphne.jpg')
+})
+
+// tell daphne to start listening for requests
+// this should always be last
+app.listen(port, () => {
+  console.log('Example app listening on port ' + port)
+})
 </code>
     </pre>
 
