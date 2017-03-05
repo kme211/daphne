@@ -5,6 +5,10 @@ html {
     background: #eee;
 }
 
+a {
+    color: #482FF7;
+}
+
 .title,
 .subtitle {
     text-align: center;

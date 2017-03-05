@@ -8,20 +8,25 @@
 <body>
     <img src="public/daphne.jpg" alt="Daphne the dog" class="daphne">
     <h1 class="title">Daphne</h1>
-    <h2 class="subtitle">A simple web server built with Node.</h2>
+    <h2 class="subtitle">A simple web server framework built with Node.</h2>
 
     
 
     <h2>About</h2>
 
     <p>
-    I am a junior web developer who realize that I shouldn't need to install Express just to 
-    get a development server up and running. I just wanted to see if I could make something 
-    myself that did what I needed it to--serve resources.
+        It's like <a href="https://github.com/expressjs/express" target="_blank">Express</a> but not as awesome or robust. 
     </p>
 
     <p>
-    I named this project "Daphne" after my dog, a cute mutt who loves bringing me her toys.
+        I am a junior web developer who realized that I shouldn't need to install Express just to 
+        get a development server up and running. I just wanted to see if I could make something 
+        myself that did what I needed it to--serve resources. I don't plan on using this for production.
+    </p>
+
+    <p>
+        
+I named this project "Daphne" after my <a href="http://res.cloudinary.com/ddy54k4ks/image/upload/v1488487770/daphne/daph.jpg" target="_blank">dog</a>, a cute mutt who loves bringing me her toys.
     </p>
 
     <h2>Usage</h2>
@@ -34,7 +39,7 @@
     app.use(app.static('public'))
 
     app.get('/hello', (req, res) => {
-        res.send('text', 'hola!')
+        res.send('hola!')
     })
 
     app.get('/', (req, res) => {
