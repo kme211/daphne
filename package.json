@@ -1,13 +1,14 @@
 {
   "name": "daphne",
-  "version": "0.0.1",
-  "description": "A simple web server.",
+  "version": "0.1.0",
+  "description": "A simple web server framework.",
   "main": "daphne.js",
-  "scripts": {
-  },
+  "scripts": {},
   "keywords": [
-    "server"
+    "server",
+    "web"
   ],
   "author": "Keari Eggers <kungfu.keari@gmail.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {}
 }
