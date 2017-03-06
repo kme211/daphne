@@ -33,7 +33,7 @@ app.get('/hello', (req, res) => {
 })
 
 app.get('/dog', (req, res) => {
-  res.send('public/daphne.jpg')
+  res.send('public/images/daphne.jpg')
 })
 
 // tell daphne to start listening for requests

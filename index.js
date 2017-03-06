@@ -107,25 +107,29 @@ class Daphne {
   }
 
   static(dir) {
-    const files = fs.readdirSync(dir)
-    return files.map(file => {
-      const parsed = path.parse(`${dir}/${file}`)
-      const filePath = path.format({
-        root: this.baseDirectory,
-        dir: parsed.dir,
-        base: parsed.base
+    const baseDirectory = this.baseDirectory
+    function getFiles(dir, dirPath, files = []) {
+      const contents = fs.readdirSync(dir)
+      contents.forEach(resource => {
+        const resourcePath = path.join(baseDirectory, dirPath, resource)
+        const stats = fs.lstatSync(resourcePath)
+        if(stats.isFile()) {
+          const filePath = path.join(baseDirectory, dirPath, resource)
+          files.push(filePath)
+        } else if(stats.isDirectory()) {
+          const newDirPath = path.join(dirPath, resource)
+          getFiles(resourcePath, newDirPath, files)
+        }
       })
-      const extension = parsed.ext.slice(1)
+      return files
+    }
+    const files = getFiles(dir, dir.replace(baseDirectory, ''))
+    return files.map(filePath => {
       const route = filePath.replace(this.baseDirectory, '').split(path.sep).join('/')
-
       return {
         route,
         fn: (req, res) => {
-          if (!fs.existsSync(filePath)) {
-            res.statusCode = 404
-          } else {
-            fs.createReadStream(filePath).pipe(res)
-          }
+          this.send(res, route)
         }
       }
     })
